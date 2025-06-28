@@ -1,0 +1,27 @@
+type Movie {
+    id: ID!
+    title: String!
+    description: String
+    genre: String
+    language: String
+    releaseDate: String
+    posterUrl: String
+    isSeries: Boolean
+}
+
+type Query {
+    allMovies: [Movie]
+    searchMovies(title: String!): [Movie]
+}
+
+type Mutation {
+    addMovie(
+        title: String!
+        description: String
+        genre: String
+        language: String
+        releaseDate: String
+        posterUrl: String
+        isSeries: Boolean
+    ): Movie
+}

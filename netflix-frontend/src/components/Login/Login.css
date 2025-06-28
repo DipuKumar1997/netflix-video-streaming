@@ -1,0 +1,92 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  background: linear-gradient(to top, #bfdbfe, #c4b5fd); /* from-blue-200 to-purple-400 */
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .logo {
+    left: 5rem;
+    width: 8rem;
+  }
+}
+
+.card {
+  background-color: #0f172a; /* slate-900 */
+  padding: 2.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 24rem;
+  color: #c7d2fe; /* text-indigo-300 */
+  font-size: 0.875rem;
+}
+
+.heading {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.subtext {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 1.25rem;
+  border-radius: 9999px;
+  background-color: #333a5c;
+  margin-bottom: 1rem;
+}
+
+.input {
+  background: transparent;
+  outline: none;
+  flex: 1;
+  color: white;
+  border: none;
+}
+
+.forgot {
+  margin-bottom: 1rem;
+  color: #818cf8; /* text-indigo-500 */
+  cursor: pointer;
+}
+
+.switchText {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #9ca3af; /* text-gray-400 */
+  margin-top: 1rem;
+}
+
+.switchLink {
+  color: #60a5fa; /* text-blue-400 */
+  cursor: pointer;
+  text-decoration: underline;
+}

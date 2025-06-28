@@ -1,0 +1,4 @@
+react-login-form 
+npm install typescript@4.9.5 --save-dev --legacy-peer-deps
+npm install react-login-form --legacy-peer-deps
+

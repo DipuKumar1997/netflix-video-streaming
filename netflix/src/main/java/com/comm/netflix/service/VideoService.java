@@ -1,6 +1,6 @@
 package com.comm.netflix.service;
 
-import com.comm.netflix.entity.Video;
+import org.example.commonmodel.entity.Video;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

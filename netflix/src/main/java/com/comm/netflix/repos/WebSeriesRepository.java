@@ -1,6 +1,7 @@
 package com.comm.netflix.repos;
 
-import com.comm.netflix.entity.WebSeries;
+//import com.comm.netflix.entity.WebSeries;
+import org.example.commonmodel.entity.WebSeries;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

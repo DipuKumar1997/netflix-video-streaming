@@ -1,38 +1,67 @@
 package com.comm.netflix.controller;
-import com.comm.netflix.entity.Video;
+//import com.comm.netflix.entity.Video;
 import com.comm.netflix.repos.VideoRepos;
 import com.comm.netflix.service.VideoService;
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
+import org.example.commonmodel.entity.Movie;
+import org.example.commonmodel.entity.User;
+import org.example.commonmodel.entity.Video;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.comm.netflix.config.JwtUtil;
-import com.comm.netflix.entity.Movie;
-import com.comm.netflix.entity.User;
+//import com.comm.netflix.entity.Movie;
+//import com.comm.netflix.entity.User;
 import com.comm.netflix.repos.MovieRepository;
 import com.comm.netflix.repos.UserRepository;
 import com.comm.netflix.service.MovieService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
-//reuiredargsconstructor
+//@RequiredArgsConstructor
 @RequestMapping("/api/movies")
 public class MovieController {
-    @Autowired
-    private MovieService movieService;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private MovieRepository movieRepository;
-    @Autowired
-    private VideoRepos videoRepos;
-    @Autowired
-    private VideoService videoService;
+    @Value("${save-movie-in-es-ds-preparing-for-the-search}")
+    private String topicName;
 
+
+    public MovieController( MovieService movieService, JwtUtil jwtUtil, UserRepository userRepository, MovieRepository movieRepository, VideoRepos videoRepos, VideoService videoService, KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing) {
+        this.movieService = movieService;
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.movieRepository = movieRepository;
+        this.videoRepos = videoRepos;
+        this.videoService = videoService;
+        this.sendingTheMovieToEsDatabaseForIndexing = sendingTheMovieToEsDatabaseForIndexing;
+    }
+
+    private final JwtUtil jwtUtil;
+    private final MovieService movieService;
+    private final UserRepository userRepository;
+    
+    private final  MovieRepository movieRepository;
+    
+    private final VideoRepos videoRepos;
+    
+    private final VideoService videoService;
+
+    @Qualifier("sending-the-movie-to-es-database-for-indexing")
+    private final  KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing;
+    /*
+    @Qualifier("sending-the-movie-to-es-database-for-indexing")
+    private KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing;
+    */
+//    public MovieController(@Qualifier("sending-the-movie-to-es-database-for-indexing") KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing){
+//        this.sendingTheMovieToEsDatabaseForIndexing = sendingTheMovieToEsDatabaseForIndexing;
+//    }
 //    @PostMapping("/add")
 //    public Movie addMovie(@RequestBody Movie movie) {
 //        return movieService.addMovie(movie);
@@ -94,10 +123,13 @@ public class MovieController {
             movie.setLanguage(language);
             movie.setPosterUrl(posterUrl);
             movie.setVideoId(savedVideo.getVideoId());
+            movie.setDescription ( "a string so that not null" );
 //            movie.setVideoId(savedVideo.getVideoId());
 //            movie.setVideo(videoFile);
 //            movie.setVideoPath(filepath.toString());
             Movie savedMovie = movieRepository.save(movie);
+//            log.info ( "sending to es database " );
+            sendingTheMovieToEsDatabaseForIndexing.send ( topicName,movie );
             return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());

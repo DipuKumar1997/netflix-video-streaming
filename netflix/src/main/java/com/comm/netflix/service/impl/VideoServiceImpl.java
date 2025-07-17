@@ -1,9 +1,10 @@
 package com.comm.netflix.service.impl;
 
-import com.comm.netflix.entity.Video;
+//import com.comm.netflix.entity.Video;
 import com.comm.netflix.repos.VideoRepos;
 import com.comm.netflix.service.VideoService;
 import jakarta.annotation.PostConstruct;
+import org.example.commonmodel.entity.Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

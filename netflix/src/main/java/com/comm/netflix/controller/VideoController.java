@@ -1,8 +1,9 @@
 package com.comm.netflix.controller;
 
 import com.comm.netflix.AppConstants;
-import com.comm.netflix.entity.Video;
+//import com.comm.netflix.entity.Video;
 import com.comm.netflix.service.VideoService;
+import org.example.commonmodel.entity.Video;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;

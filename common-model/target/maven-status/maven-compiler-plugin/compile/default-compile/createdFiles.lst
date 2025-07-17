@@ -1,0 +1,11 @@
+org\example\commonmodel\entity\WebSeries$WebSeriesBuilder.class
+org\example\commonmodel\entity\Movie.class
+org\example\commonmodel\entity\Playlist.class
+org\example\commonmodel\entity\User.class
+org\example\commonmodel\entity\WebSeries.class
+org\example\commonmodel\entity\Profile.class
+org\example\commonmodel\entity\Review.class
+org\example\commonmodel\entity\WatchHistory.class
+org\example\commonmodel\entity\Video.class
+org\example\commonmodel\entity\Movie$MovieBuilder.class
+org\example\commonmodel\entity\Review$ReviewBuilder.class

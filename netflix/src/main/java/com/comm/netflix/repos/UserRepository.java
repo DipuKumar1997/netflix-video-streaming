@@ -1,6 +1,7 @@
 package com.comm.netflix.repos;
 
-import com.comm.netflix.entity.User;
+//import com.comm.netflix.entity.User;
+import org.example.commonmodel.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

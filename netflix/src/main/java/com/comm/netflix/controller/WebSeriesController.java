@@ -1,11 +1,13 @@
 package com.comm.netflix.controller;
 
 import com.comm.netflix.config.JwtUtil;
-import com.comm.netflix.entity.User;
-import com.comm.netflix.entity.WebSeries;
+//import com.comm.netflix.entity.User;
+//import com.comm.netflix.entity.WebSeries;
 import com.comm.netflix.repos.UserRepository;
 import com.comm.netflix.service.WebSeriesService;
 import io.jsonwebtoken.JwtException;
+import org.example.commonmodel.entity.User;
+import org.example.commonmodel.entity.WebSeries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

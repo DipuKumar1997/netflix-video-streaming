@@ -1,6 +1,7 @@
 package com.comm.netflix.repos;
 
-import com.comm.netflix.entity.Review;
+//import com.comm.netflix.entity.Review;
+import org.example.commonmodel.entity.Review;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

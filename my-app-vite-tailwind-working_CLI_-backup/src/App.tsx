@@ -9,10 +9,11 @@ import { Route, Routes } from 'react-router-dom'
 // import LoginSignup from './components/Login/Login'
 // import Navbar from './components/Navbar/Navbar'
 import routes from "../src/routee/Routes";
+import Navbar from './components/Navbar/Navbar';
 function App() {
   return (
     <>
-    {/* <Navbar/> */}
+    <Navbar/>
     <Routes>
       {routes.map(({ path, element }, index) => (
         <Route key={index} path={path} element={element} />

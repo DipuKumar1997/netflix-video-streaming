@@ -1,0 +1,8 @@
+org\example\searchservice\MovieDocument.class
+org\example\searchservice\SearchServiceApplication.class
+org\example\searchservice\Video.class
+org\example\searchservice\Consumer.class
+org\example\searchservice\Movie$MovieBuilder.class
+org\example\searchservice\KafkaConsumerConfig.class
+org\example\searchservice\MovieSearchRepository.class
+org\example\searchservice\Movie.class

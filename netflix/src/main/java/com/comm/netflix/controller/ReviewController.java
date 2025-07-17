@@ -1,10 +1,12 @@
 package com.comm.netflix.controller;
 
 import com.comm.netflix.config.JwtUtil;
-import com.comm.netflix.entity.Review;
-import com.comm.netflix.entity.User;
+//import com.comm.netflix.entity.Review;
+//import com.comm.netflix.entity.User;
 import com.comm.netflix.repos.UserRepository;
 import com.comm.netflix.service.ReviewService;
+import org.example.commonmodel.entity.Review;
+import org.example.commonmodel.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,7 @@ public class ReviewController {
             String email = jwtUtil.extractEmail(jwt);
 
             // Find user by email
-            Optional<User> optionalUser = userRepository.findByEmail(email);
+            Optional<org.example.commonmodel.entity.User> optionalUser = userRepository.findByEmail(email);
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.status(401).body("Unauthorized: User not found");
             }

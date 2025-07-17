@@ -1,8 +1,9 @@
 package com.comm.netflix.service;
 
-import com.comm.netflix.entity.WebSeries;
+//import com.comm.netflix.entity.WebSeries;
 import com.comm.netflix.repos.WebSeriesRepository;
 //import com.comm.netflix.repository.WebSeriesRepository;
+import org.example.commonmodel.entity.WebSeries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,8 @@
 package com.comm.netflix.service;
 
-import com.comm.netflix.entity.Review;
+//import com.comm.netflix.entity.Review;
 import com.comm.netflix.repos.ReviewRepository;
+import org.example.commonmodel.entity.Review;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

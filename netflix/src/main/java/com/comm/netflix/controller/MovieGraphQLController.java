@@ -1,8 +1,8 @@
 package com.comm.netflix.controller;
 
-import com.comm.netflix.entity.Movie;
-//import com.comm.netflix.model.Movie;
+//import com.comm.netflix.entity.Movie;
 import com.comm.netflix.service.MovieService;
+import org.example.commonmodel.entity.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -18,7 +18,7 @@ public class MovieGraphQLController {
     private MovieService movieService;
 
     @QueryMapping
-    public List<Movie> allMovies() {
+    public List<org.example.commonmodel.entity.Movie> allMovies() {
         return movieService.getAllMovies();
     }
 

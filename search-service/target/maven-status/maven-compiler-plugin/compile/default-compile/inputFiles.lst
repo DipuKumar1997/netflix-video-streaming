@@ -6,5 +6,8 @@ C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchser
 C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\Movie.java
 C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\MovieDocument.java
 C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\MovieSearchRepository.java
+C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\MovieSearchService.java
+C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\MovieSuggestionService.java
+C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\SearchController.java
 C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\SearchServiceApplication.java
 C:\Users\PC\Downloads\netflix\search-service\src\main\java\org\example\searchservice\Video.java

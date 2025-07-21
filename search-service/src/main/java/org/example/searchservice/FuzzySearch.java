@@ -5,7 +5,7 @@
 //import org.elasticsearch.index.query.QueryBuilders;
 //import org.elasticsearch.common.unit.Fuzziness;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 //import org.springframework.data.elasticsearch.core.SearchHit;
 //import org.springframework.data.elasticsearch.core.SearchHits;
 //import org.springframework.stereotype.Service;

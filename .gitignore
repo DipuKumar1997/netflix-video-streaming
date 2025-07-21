@@ -3,3 +3,4 @@ videos/*
 !videos/.gitkeep
 **/target/
 **/build/
+**/videos/

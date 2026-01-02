@@ -1,4 +1,4 @@
 $ git branch
 * feature/es-connection
 * main
-this main branch is only for the stater
+this main branch is only for the starter

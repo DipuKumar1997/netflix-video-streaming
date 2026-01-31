@@ -559,7 +559,9 @@ const Navbar = () => {
     if (query.length > 1) { // Fetch suggestions only if query is at least 2 characters
       try {
         // IMPORTANT: Replace with your actual backend URL
+        console.log("------------------------------ qury in frontend "+ query);
         const response = await fetch(`http://localhost:8086/search/autocomplete-n-gram?query=${query}`);
+        console.log("--------------------------"+ response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

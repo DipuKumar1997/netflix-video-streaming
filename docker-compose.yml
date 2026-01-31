@@ -1,31 +1,193 @@
+#version: "3.8"
+#
+#services:
+#  glances:
+#    image: nicolargo/glances:latest
+#    container_name: glances
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#    ports:
+#      - "61208:61208"
+#    environment:
+#      - "GLANCES_OPT=-w" # Run in Web mode
+#    restart: always
+#  dozzle:
+#    image: amir20/dozzle:latest
+#    container_name: log-viewer
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro  # :ro means read-only for safety
+#    ports:
+#      - "8888:8080"
+#    environment:
+#      - DOZZLE_LEVEL=info
+#    restart: unless-stopped
+#  dashboard:
+#    image: b4bz/homer
+#    container_name: local-dashboard
+#    volumes:
+#      - ./dashboard-config:/www/assets
+#    ports:
+#      - "8001:8080"
+#    restart: always
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:7.5.0
+#    hostname: zookeeper
+#    ports:
+#      - "2181:2181"
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000
+#
+#  kafka:
+#    image: confluentinc/cp-kafka:7.5.0
+#    hostname: kafka
+#    depends_on:
+#      - zookeeper
+#    ports:
+#      - "9092:9092"
+#      - "29092:29092"
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+#      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#
+#  akhq:
+#    image: tchiotludo/akhq:0.24.0
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "8081:8080"
+#    environment:
+#      AKHQ_CONFIGURATION: |
+#        akhq:
+#          connections:
+#            local:
+#              properties:
+#                bootstrap.servers: "kafka:29092"
+#
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+#    container_name: elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#    ports:
+#      - "9200:9200"
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.14.0
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#
+#  search-service:
+#    build:
+#      context: .
+#      dockerfile: search-service/Dockerfile
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_started
+#
+#  backend:
+#    build:
+#      context: .
+#      dockerfile: netflix/Dockerfile
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    volumes:
+#      - ~/.m2:/root/.m2
+#      - ./movies.json:/app/movies.json:ro
+#    environment:
+#      - SEED_FILE_PATH=/app/movies.json
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - kafka
+#
+#  frontend:
+#    build: ./netflix-frontendV0.2
+#    ports:
+#      - "5173:5173"
+#    environment:
+#      - VITE_API_BASE_URL=http://localhost:8080
+
+
+
 version: "3.8"
 
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    hostname: zookeeper
+  glances:
+    image: nicolargo/glances:latest
+    container_name: glances
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "2181:2181"
+      - "61208:61208"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      - GLANCES_OPT=-w
+    restart: always
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: log-viewer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8888:8080"
+    restart: unless-stopped
+
+  dashboard:
+    image: b4bz/homer
+    container_name: local-dashboard
+    volumes:
+      - ./dashboard-config:/www/assets
+    ports:
+      - "8001:8080"
+    restart: always
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    hostname: kafka
+    container_name: kafka
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
-      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_SYNC_LIMIT: 2
+    ports:
+      - "2181:2181"
 
   akhq:
     image: tchiotludo/akhq:0.24.0
@@ -39,7 +201,7 @@ services:
           connections:
             local:
               properties:
-                bootstrap.servers: "kafka:29092"
+                bootstrap.servers: "kafka:9092" # Fixed port from 29092
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
@@ -50,11 +212,11 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "9200:9200"
-      - "9300:9300"
     healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep green"]
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'"]
       interval: 10s
-      retries: 20
+      timeout: 5s
+      retries: 10
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.14.0
@@ -70,19 +232,35 @@ services:
     build:
       context: .
       dockerfile: search-service/Dockerfile
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092 # Fixed port from 29092
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
     ports:
-      - "8082:8082"
+      - "8086:8086"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kafka:
+        condition: service_started
 
   backend:
     build:
       context: .
       dockerfile: netflix/Dockerfile
+    volumes:
+      - ~/.m2:/root/.m2   # runtime only (OK)
+      - ./movies.json:/app/movies.json:ro
+    environment:
+      - SEED_FILE_PATH=/app/movies.json
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092  #add this
     ports:
       - "8080:8080"
+    depends_on:
+      - kafka
 
   frontend:
     build: ./netflix-frontendV0.2
     ports:
       - "5173:5173"
     environment:
-      VITE_API_BASE_URL: http://localhost:8080
+      - VITE_API_BASE_URL=http://localhost:8080

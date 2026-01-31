@@ -37,6 +37,7 @@ public class SearchController {
     // Fast n-gram autocomplete
     @GetMapping("/autocomplete-n-gram")
     public List<MovieDocument> autocompleteNGram(@RequestParam String query) {
+        System.out.println ("query hit in autocomplete - n gram "+ query);
         return movieSearchService.autocompleteFast(query);
     }
 

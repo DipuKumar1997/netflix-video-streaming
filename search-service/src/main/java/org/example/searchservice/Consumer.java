@@ -15,7 +15,7 @@ public class Consumer {
     private static final Logger log = LoggerFactory.getLogger(Consumer.class);
     @Autowired
     private  MovieSearchRepository movieSearchRepository;
-    @KafkaListener(topics = "save-movie-in-es-ds-preparing-for-the-search", groupId = "search-service" , containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = "save-movie-in-es-ds-preparing-for-the-search", groupId = "search-service-v2" , containerFactory = "kafkaListenerContainerFactory")
     public void consume(Movie movie) {
         log.info("Received message from Kafka: {}", movie);
         try {

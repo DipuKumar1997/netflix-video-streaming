@@ -104,7 +104,9 @@ public class VideoController {
 public ResponseEntity<Resource> streamVideoRange(@PathVariable String videoId, @RequestHeader(value = "Range", required = false) String range) {
     System.out.println ( range );
     Video video = videoService.getVideo ( videoId );
+    System.out.println ("video path from the stream service "+ video.getVideoPath ());
     Path path = Paths.get ( video.getVideoPath () );
+    System.out.println ("video path from the stream service "+ path);
     Resource resource = new FileSystemResource ( path );
     String contentType = video.getContentType ();
     if (contentType == null) {contentType = "application/octet-stream";}
@@ -153,6 +155,4 @@ public ResponseEntity<Resource> streamVideoRange(@PathVariable String videoId, @
     } catch (IOException ex) {
         return ResponseEntity.status ( HttpStatus.INTERNAL_SERVER_ERROR ).build ();
     }
-
-
 }}

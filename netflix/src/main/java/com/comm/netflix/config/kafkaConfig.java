@@ -1,8 +1,7 @@
 package com.comm.netflix.config;
 
-// REMOVE THIS LINE: import com.comm.netflix.entity.Movie;
-// ADD THIS LINE:
-//import org.example.commonmodel.entity.Movie; // <--- This is the CRITICAL change
+//import com.comm.netflix.entity.Movie;
+//import org.example.commonmodel.entity.Movie;
 import org.example.commonmodel.entity.Movie;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -22,6 +21,9 @@ import java.util.Map;
 @Configuration
 public class kafkaConfig { // Note: Class name 'kafkaConfig' should ideally be 'KafkaConfig' for Java conventions
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Value ("${save-movie-in-es-ds-preparing-for-the-search}")
     private String topicName;
 
@@ -35,7 +37,8 @@ public class kafkaConfig { // Note: Class name 'kafkaConfig' should ideally be '
     @Bean
     public ProducerFactory<String, Movie> movieProducerFactory() {
         Map<String, Object> config = new HashMap<> ();
-        config.put( ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+//        config.put( ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put( ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put( ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 

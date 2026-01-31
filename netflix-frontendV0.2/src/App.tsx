@@ -10,6 +10,7 @@ import { Route, Routes } from 'react-router-dom'
 // import Navbar from './components/Navbar/Navbar'
 import routes from "../src/routee/Routes";
 import Navbar from './components/Navbar/Navbar';
+import '../src/index.css'
 function App() {
   return (
     <>

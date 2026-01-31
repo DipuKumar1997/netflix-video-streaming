@@ -1,4 +1,3 @@
-// src/components/WatchVideo.jsx
 import { useParams } from "react-router-dom";
 
 const WatchVideo = () => {

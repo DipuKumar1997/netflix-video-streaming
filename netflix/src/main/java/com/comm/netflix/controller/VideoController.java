@@ -1,12 +1,10 @@
 package com.comm.netflix.controller;
 
 import com.comm.netflix.AppConstants;
-//import com.comm.netflix.entity.Video;
 import com.comm.netflix.service.VideoService;
 import org.example.commonmodel.entity.Video;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,7 +43,7 @@ public class VideoController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                 .body(fileSystemResource);
     }
-/*
+   /*
     //stream in chunks
     @GetMapping("/stream/range/{videoId}")
     public ResponseEntity<Resource> streamRange(@PathVariable String videoId, @RequestHeader(value = "Range", required = false) String range) throws IOException {
@@ -99,6 +97,7 @@ public class VideoController {
                 .contentType( MediaType.parseMediaType( contentType ) )
                 .body(new InputStreamResource(inputStream));
     }*/
+
 // stream video in chunks
 @GetMapping("/stream/range/{videoId}")
 public ResponseEntity<Resource> streamVideoRange(@PathVariable String videoId, @RequestHeader(value = "Range", required = false) String range) {

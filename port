@@ -1,0 +1,12 @@
+frontend :-5173
+backend :- 8080
+
+glances :- 61208
+log-viewer :- 8888
+
+
+elasticsearch :- 9200
+kibana :- 5601
+
+kafka :- 9092
+ahq :- 8081

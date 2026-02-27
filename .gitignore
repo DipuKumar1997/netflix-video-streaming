@@ -4,3 +4,20 @@ videos/*
 **/target/
 **/build/
 **/videos/
+
+# Java
+target/
+*.jar
+*.log
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

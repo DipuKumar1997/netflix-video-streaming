@@ -2,12 +2,8 @@
 
 ## Service Access (VPS Public IP or Localhost)
 
-If running locally:
-http://localhost:PORT
-
-If deployed on a VPS:
-http://YOUR_VPS_PUBLIC_IP:PORT
-
+If running locally: http://localhost:PORT
+If deployed on a VPS: http://YOUR_VPS_PUBLIC_IP:PORT
 
 --------------------------------------------------
 
@@ -50,24 +46,15 @@ If MongoDB is not installed, install it locally and ensure the MongoDB service i
 # Build and Run the Application
 
 From the project root directory:
-
-Build all Docker images:
-
-docker compose build
-
-Run the application (foreground mode):
-
-docker compose up
-
-To stop the application:
-Press CTRL + C
+Build all Docker images: docker compose build
+Run the application (foreground mode): docker compose up
 
 --------------------------------------------------
 
 # Application Architecture
 
 <p align="center">
-  <img src="docs/architecture-diagram.svg" width="900"/>
+  <img src="docs/search-microservices.drawio.svg" width="900"/>
 </p>
 
 This architecture focuses on the search flow and event-driven communication:

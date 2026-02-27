@@ -23,8 +23,8 @@ public class SearchController {
     private final MovieSearchRepository movieRepository;
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
-//    @Autowired
-//    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+    //    @Autowired
+    //    private ElasticsearchRestTemplate elasticsearchRestTemplate;
     @Autowired
     private MovieSearchService movieSearchService;
 
@@ -62,106 +62,105 @@ public class SearchController {
 
 
 }
-/*
 
-// 1. Updated MovieDocument with completion field
-@Data
-@Document(indexName = "movies")
-@AllArgsConstructor
-@NoArgsConstructor
-public class MovieDocument {
-    @Id
-    private String id;
+    /*
+    @Data
+    @Document(indexName = "movies")
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class MovieDocument {
+        @Id
+        private String id;
 
-    @Field(type = FieldType.Text, analyzer = "standard")
-    private String title;
+        @Field(type = FieldType.Text, analyzer = "standard")
+        private String title;
 
-    @Field(type = FieldType.Text)
-    private String description;
+        @Field(type = FieldType.Text)
+        private String description;
 
-    // Add completion field for fast autocomplete
-    @CompletionField
-    private Completion suggest;
+        // Add completion field for fast autocomplete
+        @CompletionField
+        private Completion suggest;
 
-    // Constructor to set suggest field
-    public MovieDocument(String id, String title, String description) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.suggest = new Completion(new String[]{title}); // Create suggestion from title
-    }
-}
-
-// 2. Controller with NativeQuery approaches
-@RestController
-@RequestMapping("/api/movies")
-public class MovieController {
-
-    @Autowired
-    private ElasticsearchOperations elasticsearchOperations;
-
-    // Method 1: Basic NativeQuery with match_phrase_prefix
-    @GetMapping("/autocomplete/basic")
-    public List<MovieDocument> autocompleteBasic(@RequestParam String query) {
-        NativeQuery searchQuery = NativeQuery.builder()
-            .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
-                q.matchPhrasePrefix(m -> m.field("title").query(query))))
-            .withMaxResults(7)
-            .build();
-
-        SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
-        return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+        // Constructor to set suggest field
+        public MovieDocument(String id, String title, String description) {
+            this.id = id;
+            this.title = title;
+            this.description = description;
+            this.suggest = new Completion(new String[]{title}); // Create suggestion from title
+        }
     }
 
-    // Method 2: Optimized with wildcard query
-    @GetMapping("/autocomplete/wildcard")
-    public List<MovieDocument> autocompleteWildcard(@RequestParam String query) {
-        NativeQuery searchQuery = NativeQuery.builder()
-            .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
-                q.wildcard(w -> w.field("title.keyword").value(query + "*"))))
-            .withMaxResults(7)
-            .build();
+    // 2. Controller with NativeQuery approaches
+    @RestController
+    @RequestMapping("/api/movies")
+    public class MovieController {
 
-        SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
-        return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+        @Autowired
+        private ElasticsearchOperations elasticsearchOperations;
+
+        // Method 1: Basic NativeQuery with match_phrase_prefix
+        @GetMapping("/autocomplete/basic")
+        public List<MovieDocument> autocompleteBasic(@RequestParam String query) {
+            NativeQuery searchQuery = NativeQuery.builder()
+                .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
+                    q.matchPhrasePrefix(m -> m.field("title").query(query))))
+                .withMaxResults(7)
+                .build();
+
+            SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
+            return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+        }
+
+        // Method 2: Optimized with wildcard query
+        @GetMapping("/autocomplete/wildcard")
+        public List<MovieDocument> autocompleteWildcard(@RequestParam String query) {
+            NativeQuery searchQuery = NativeQuery.builder()
+                .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
+                    q.wildcard(w -> w.field("title.keyword").value(query + "*"))))
+                .withMaxResults(7)
+                .build();
+
+            SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
+            return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+        }
+
+        // Method 3: Fastest - Using completion suggester
+        @GetMapping("/autocomplete/suggest")
+        public List<String> autocompleteSuggest(@RequestParam String query) {
+            NativeQuery searchQuery = NativeQuery.builder()
+                .withSuggestBuilder(SuggestBuilder.suggest()
+                    .addSuggestion("title-suggest",
+                        CompletionSuggestionBuilder.completion("suggest")
+                            .prefix(query)
+                            .size(7)))
+                .build();
+
+            SearchResponse response = elasticsearchOperations.execute(client ->
+                client.search(searchQuery, MovieDocument.class));
+
+            return response.suggest().get("title-suggest")
+                .stream()
+                .flatMap(suggest -> suggest.options().stream())
+                .map(option -> option.text())
+                .collect(Collectors.toList());
+        }
+
+        // Method 4: Multi-field search (title + description)
+        @GetMapping("/autocomplete/multi")
+        public List<MovieDocument> autocompleteMulti(@RequestParam String query) {
+            NativeQuery searchQuery = NativeQuery.builder()
+                .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
+                    q.multiMatch(m -> m
+                        .query(query)
+                        .fields("title^2", "description") // title has 2x boost
+                        .type(TextQueryType.PhrasePrefix))))
+                .withMaxResults(7)
+                .build();
+
+            SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
+            return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
+        }
     }
 
-    // Method 3: Fastest - Using completion suggester
-    @GetMapping("/autocomplete/suggest")
-    public List<String> autocompleteSuggest(@RequestParam String query) {
-        NativeQuery searchQuery = NativeQuery.builder()
-            .withSuggestBuilder(SuggestBuilder.suggest()
-                .addSuggestion("title-suggest",
-                    CompletionSuggestionBuilder.completion("suggest")
-                        .prefix(query)
-                        .size(7)))
-            .build();
-
-        SearchResponse response = elasticsearchOperations.execute(client ->
-            client.search(searchQuery, MovieDocument.class));
-
-        return response.suggest().get("title-suggest")
-            .stream()
-            .flatMap(suggest -> suggest.options().stream())
-            .map(option -> option.text())
-            .collect(Collectors.toList());
-    }
-
-    // Method 4: Multi-field search (title + description)
-    @GetMapping("/autocomplete/multi")
-    public List<MovieDocument> autocompleteMulti(@RequestParam String query) {
-        NativeQuery searchQuery = NativeQuery.builder()
-            .withQuery(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(q ->
-                q.multiMatch(m -> m
-                    .query(query)
-                    .fields("title^2", "description") // title has 2x boost
-                    .type(TextQueryType.PhrasePrefix))))
-            .withMaxResults(7)
-            .build();
-
-        SearchHits<MovieDocument> searchHits = elasticsearchOperations.search(searchQuery, MovieDocument.class);
-        return searchHits.stream().map(SearchHit::getContent).collect(Collectors.toList());
-    }
-}
-
-* */
+    * */

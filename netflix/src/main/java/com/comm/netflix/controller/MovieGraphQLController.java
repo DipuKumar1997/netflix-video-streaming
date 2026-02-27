@@ -1,6 +1,5 @@
 package com.comm.netflix.controller;
 
-//import com.comm.netflix.entity.Movie;
 import com.comm.netflix.service.MovieService;
 import org.example.commonmodel.entity.Movie;
 import org.springframework.beans.factory.annotation.Autowired;

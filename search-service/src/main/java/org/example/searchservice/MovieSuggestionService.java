@@ -4,8 +4,8 @@
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Profile;
 //import org.springframework.data.elasticsearch.client.elc.NativeQuery;
-//import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 //import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 //import org.springframework.data.elasticsearch.core.SearchHits;
 //import org.springframework.data.elasticsearch.core.suggest.CompletionSuggestion; // <--- ADD/CORRECT THIS
@@ -16,15 +16,10 @@
 //import java.util.Collections;
 //import java.util.List;
 //import java.util.stream.Collectors;
-//
 //import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
-//// Make sure this import is correct for your Spring Data ES version, sometimes it's different
-//// For Spring Data Elasticsearch 5.x+, this is usually correct:
-//// import co.elastic.clients.elasticsearch._types.Suggester; // Not directly used in this simple service
-//
-//import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders; // For NativeQueryBuilder
 //
 //@Service
+//@Profile ( value = "testing-phase")
 //public class MovieSuggestionService {
 //
 //    private static final Logger log = LoggerFactory.getLogger(MovieSuggestionService.class);

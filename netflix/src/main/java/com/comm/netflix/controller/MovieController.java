@@ -1,9 +1,7 @@
 package com.comm.netflix.controller;
-//import com.comm.netflix.entity.Video;
+
 import com.comm.netflix.repos.VideoRepos;
 import com.comm.netflix.service.VideoService;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.Slf4j;
 import org.example.commonmodel.entity.Movie;
 import org.example.commonmodel.entity.User;
@@ -13,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.comm.netflix.config.JwtUtil;
-//import com.comm.netflix.entity.Movie;
-//import com.comm.netflix.entity.User;
 import com.comm.netflix.repos.MovieRepository;
 import com.comm.netflix.repos.UserRepository;
 import com.comm.netflix.service.MovieService;
@@ -26,7 +22,6 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-//@RequiredArgsConstructor
 @RequestMapping("/api/movies")
 public class MovieController {
     @Value("${save-movie-in-es-ds-preparing-for-the-search}")
@@ -59,13 +54,13 @@ public class MovieController {
     @Qualifier("sending-the-movie-to-es-database-for-indexing")
     private KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing;
     */
-//    public MovieController(@Qualifier("sending-the-movie-to-es-database-for-indexing") KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing){
-//        this.sendingTheMovieToEsDatabaseForIndexing = sendingTheMovieToEsDatabaseForIndexing;
-//    }
-//    @PostMapping("/add")
-//    public Movie addMovie(@RequestBody Movie movie) {
-//        return movieService.addMovie(movie);
-//    }
+    //    public MovieController(@Qualifier("sending-the-movie-to-es-database-for-indexing") KafkaTemplate<String, Movie> sendingTheMovieToEsDatabaseForIndexing){
+    //        this.sendingTheMovieToEsDatabaseForIndexing = sendingTheMovieToEsDatabaseForIndexing;
+    //    }
+    //    @PostMapping("/add")
+    //    public Movie addMovie(@RequestBody Movie movie) {
+    //        return movieService.addMovie(movie);
+    //    }
 
     @GetMapping("/all")
     public List<Movie> getAllMovies() {
@@ -100,9 +95,9 @@ public class MovieController {
             }
             // Create and save the video metadata + file
             Video video = new Video();
-//            video.setTitle(title); // Optional
-//            video.setDescription("Uploaded via /add"); // Optional
-//            video.setContentType(videoFile.getContentType());
+            //    video.setTitle(title);
+            //    video.setDescription("Uploaded via /add");
+            //    video.setContentType(videoFile.getContentType());
             Video savedVideo = videoService.saveVideo(video, videoFile);
             /*
             // Save video file locally
@@ -124,11 +119,11 @@ public class MovieController {
             movie.setPosterUrl(posterUrl);
             movie.setVideoId(savedVideo.getVideoId());
             movie.setDescription ( "a string so that not null" );
-//            movie.setVideoId(savedVideo.getVideoId());
-//            movie.setVideo(videoFile);
-//            movie.setVideoPath(filepath.toString());
-            Movie savedMovie = movieRepository.save(movie);
-//            log.info ( "sending to es database " );
+            //  movie.setVideoId(savedVideo.getVideoId());
+            //   movie.setVideo(videoFile);
+            //   movie.setVideoPath(filepath.toString());
+             Movie savedMovie = movieRepository.save(movie);
+            //  log.info ( "sending to es database " );
             sendingTheMovieToEsDatabaseForIndexing.send ( topicName,movie );
             return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
         } catch (Exception e) {

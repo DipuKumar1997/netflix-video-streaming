@@ -1,7 +1,7 @@
 ##  Application Architecture
 
 <p align="center">
-  <img src="docs/architecture-diagram.svg" width="900"/>
+  <img src="docs/search-microservices.drawio.svg" width="900"/>
 </p>
 
 This diagram focuses on the **Search flow and event-driven communication** between:

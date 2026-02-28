@@ -9,6 +9,7 @@ import org.example.commonmodel.entity.Video;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.web.multipart.MultipartFile;
 import com.comm.netflix.config.JwtUtil;
 import com.comm.netflix.repos.MovieRepository;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -123,10 +125,13 @@ public class MovieController {
             //   movie.setVideo(videoFile);
             //   movie.setVideoPath(filepath.toString());
              Movie savedMovie = movieRepository.save(movie);
-            //  log.info ( "sending to es database " );
-            sendingTheMovieToEsDatabaseForIndexing.send ( topicName,movie );
+              log.info ( "sending to es database  through kafka " );
+            CompletableFuture<SendResult<String, Movie>> sendResultCompletableFuture = sendingTheMovieToEsDatabaseForIndexing.send ( topicName, movie );
+            log.info ( "sending to es database  send successfull kafka " );
+            log.info ( sendResultCompletableFuture.toString () );
             return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
         } catch (Exception e) {
+            e.printStackTrace ();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }

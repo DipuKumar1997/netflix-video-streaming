@@ -9,9 +9,10 @@ videos/*
 target/
 *.jar
 *.log
-
+hsl-videos/**
 # Node
 node_modules/
+videos/
 dist/
 .vite/
 

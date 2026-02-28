@@ -4,7 +4,7 @@ videos/*
 **/target/
 **/build/
 **/videos/
-
+**/node_modules/
 # Java
 target/
 *.jar

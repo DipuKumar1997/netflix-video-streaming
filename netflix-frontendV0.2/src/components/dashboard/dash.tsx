@@ -38,6 +38,7 @@ const MovieSection = () => {
             ‹
           </button>
 
+
           <div 
             ref={scrollRef}
             className="flex overflow-x-auto gap-2 no-scrollbar scroll-smooth"
@@ -64,6 +65,7 @@ const MovieSection = () => {
           >
             ›
           </button>
+
         </div>
       </div>
     );

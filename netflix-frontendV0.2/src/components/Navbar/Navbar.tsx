@@ -12,7 +12,7 @@ const Navbar = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   
   // Get URL from Env
-  const SEARCH_URL = import.meta.env.VITE_SEARCH_SERVICE_URL || 'http://localhost:8080';
+  const SEARCH_URL = import.meta.env.VITE_SEARCH_SERVICE_URL || 'http://localhost:8086';
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 0);

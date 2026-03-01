@@ -45,9 +45,9 @@ If MongoDB is not installed, install it locally and ensure the MongoDB service i
 
 # Build and Run the Application
 
-From the project root directory:
-Build all Docker images: docker compose build
-Run the application (foreground mode): docker compose up
+From the project root directory:  
+Build all Docker images: docker compose build  
+Run the application (foreground mode): docker compose up  
 
 --------------------------------------------------
 

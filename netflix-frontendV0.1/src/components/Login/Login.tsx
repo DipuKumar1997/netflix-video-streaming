@@ -4,7 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ButtonWithLoader from "../../Loader";
-// import { assets } from "../../assests/assets"; // ✅ Fix path if needed
+// import { assets } from "../../assests/assets"; 
 // import styles from './Login.css';
 export default function LoginSignup() {
   const [state, setState] = useState("Login");
@@ -14,10 +14,10 @@ export default function LoginSignup() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const backendUrl = "http://localhost:8080"; // ✅ Corrected this
+  const backendUrl = "http://localhost:8080";
 
   const onSubmitHandler = async (e:any) => {
-    e.preventDefault(); // ✅ Always preventDefault at the beginning
+    e.preventDefault(); 
     setLoading(true);
     try {
       axios.defaults.withCredentials = true;

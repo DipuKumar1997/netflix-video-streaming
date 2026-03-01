@@ -117,7 +117,7 @@ import { useParams } from "react-router-dom";
 import Hls from "hls.js";
 
 const WatchVideo = () => {
-  const { videoId } = useParams();   // ✅ inside component
+  const { videoId } = useParams();   
   const videoRef = useRef(null);
 
   useEffect(() => {

@@ -55,7 +55,13 @@ Run the application (foreground mode): docker compose up
 
 <p align="center">
   <img src="docs/search-microservices.drawio.svg" width="900"/>
-</p>
+</p>  
+
+--------------------------------------------------  
+
+# Application video  
+
+[View Project Architecture / Demo](https://drive.google.com/file/d/1IgScqm_wyGXaEg7SjNqAQi5ACEuxN8r7/view?usp=sharing)  
 
 This architecture focuses on the search flow and event-driven communication:
 

@@ -134,6 +134,28 @@
 version: "3.8"
 
 services:
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH: "false"
+      ME_CONFIG_BASICAUTH_ENABLED: "false"
+
   glances:
     image: nicolargo/glances:latest
     container_name: glances
@@ -258,11 +280,14 @@ services:
     environment:
       - SEED_FILE_PATH=/app/movies.json
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092  #add this
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/netflix
     ports:
       - "8080:8080"
     depends_on:
       kafka:
           condition: service_healthy
+      mongodb:
+        condition: service_started
 
   frontend:
     build: ./netflix-frontendV0.2
@@ -270,3 +295,5 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_BASE_URL=http://localhost:8080
+volumes:
+  mongodb_data:

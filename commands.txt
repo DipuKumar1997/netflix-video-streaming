@@ -1,0 +1,6 @@
+GET /_cat/indices?v ;list of indices
+
+GET /movies/_search ;movies index all details with value and hit count
+GET /_cat/indices?v&s=docs.count:desc
+
+mkdir hsl-videos videos

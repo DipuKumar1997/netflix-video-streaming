@@ -1,0 +1,17 @@
+GET /_cat/indices?v ;list of indices
+GET /movies/_search ;movies index all details with value and hit count
+GET /_cat/indices?v&s=docs.count:desc
+
+mkdir hsl-videos videos
+
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
+
+kubectl logs -l app=netflix-search --tail=1000
+
+. Watch all cluster members come up.
+  $ kubectl get pods --namespace=default -l app=elasticsearch-master -w
+2. Retrieve elastic user's password.
+  $ kubectl get secrets --namespace=default elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+3. Test cluster health using Helm test.
+  $ helm --namespace=default test elasticsearch
+

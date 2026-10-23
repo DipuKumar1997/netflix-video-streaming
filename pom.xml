@@ -7,50 +7,33 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.5</version> <relativePath/> </parent>
+    <version>3.2.5</version>
+    <relativePath/>
+  </parent>
 
   <groupId>org.example</groupId>
   <artifactId>my-multi-project</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging> <name>My Multi-Project Netflix</name>
+  <packaging>pom</packaging>
+  <name>My Multi-Project Netflix</name>
   <description>Parent POM for Netflix Multi-Module Application</description>
-
-<!--  <properties>-->
-<!--    <java.version>17</java.version>-->
-<!--    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
-<!--    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
-
-<!--    <lombok.version>1.18.30</lombok.version>-->
-<!--    <modelmapper.version>3.2.0</modelmapper.version>-->
-<!--    <springdoc.version>2.3.0</springdoc.version>-->
-<!--    <jjwt.version>0.11.5</jjwt.version>-->
-<!--    <jakarta.validation.version>3.1.1</jakarta.validation.version>-->
-<!--    <javax.persistence.version>2.2</javax.persistence.version> <kafka-clients.version>3.7.0</kafka-clients.version> <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>-->
-<!--    <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version> <spring-boot-maven-plugin.version>${project.parent.version}</spring-boot-maven-plugin.version>-->
-<!--  </properties>-->
 
   <properties>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <spring-boot.version>3.2.5</spring-boot.version> <lombok.version>1.18.30</lombok.version>
+    <lombok.version>1.18.30</lombok.version>
     <modelmapper.version>3.2.0</modelmapper.version>
     <springdoc.version>2.3.0</springdoc.version>
     <jjwt.version>0.11.5</jjwt.version>
-    <jakarta.validation.version>3.1.1</jakarta.validation.version>
-    <javax.persistence.version>2.2</javax.persistence.version>
     <kafka-clients.version>3.7.0</kafka-clients.version>
-
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-
-    <spring-boot-maven-plugin.version>${spring-boot.version}</spring-boot-maven-plugin.version>
   </properties>
 
   <modules>
     <module>common-model</module>
-    <module>netflix</module> <module>search-service</module>
+    <module>backend-service</module>
+    <module>search-service</module>
   </modules>
 
   <dependencyManagement>
@@ -59,7 +42,8 @@
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>${lombok.version}</version>
-        <scope>provided</scope> </dependency>
+        <scope>provided</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.modelmapper</groupId>
@@ -92,17 +76,6 @@
       </dependency>
 
       <dependency>
-        <groupId>jakarta.validation</groupId>
-        <artifactId>jakarta.validation-api</artifactId>
-        <version>${jakarta.validation.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.persistence</groupId>
-        <artifactId>javax.persistence-api</artifactId>
-        <version>${javax.persistence.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
         <version>${kafka-clients.version}</version>
@@ -131,24 +104,8 @@
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
-          <configuration>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot-maven-plugin.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>repackage</goal>
-              </goals>
-            </execution>
-          </executions>
           <configuration>
             <excludes>
               <exclude>
@@ -161,5 +118,4 @@
       </plugins>
     </pluginManagement>
   </build>
-
 </project>

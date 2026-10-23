@@ -1,0 +1,22 @@
+controller:
+  replicaCount: 1
+
+broker:
+  replicaCount: 1
+
+auth:
+  clientProtocol: plaintext
+  interBrokerProtocol: plaintext
+  sasl:
+    enabled: false
+
+listeners:
+  client:
+    protocol: PLAINTEXT
+  controller:
+    protocol: PLAINTEXT
+  interBroker:
+    protocol: PLAINTEXT
+
+provisioning:
+  enabled: true

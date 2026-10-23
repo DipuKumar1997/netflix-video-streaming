@@ -1,0 +1,14 @@
+.git
+.idea
+*.iml
+.settings
+.classpath
+.project
+**/node_modules/
+**/dist/
+archive/
+hsl-videos/
+
+# Ignore intermediate target files, but include final .jar archives
+**/target/*
+!**/target/*.jar

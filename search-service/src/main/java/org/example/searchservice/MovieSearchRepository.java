@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import java.util.List;
 import org.springframework.data.domain.Pageable; 
 
-@EnableElasticsearchRepositories(basePackages = "org.example.searchservice")
+//@EnableElasticsearchRepositories(basePackages = "org.example.searchservice")
 public interface MovieSearchRepository extends ElasticsearchRepository<MovieDocument, String> {
     List<MovieDocument> findByTitleStartingWith(String title, Pageable pageable);
 }

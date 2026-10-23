@@ -1,0 +1,11 @@
+# es-values.yaml
+singleNode: true
+replicas: 1
+createCert: false
+protocol: http
+esJavaOpts: "-Xms512m -Xmx512m"  # Restricts the Java heap size to 512MB
+esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: false
+    xpack.security.http.ssl.enabled: false
+    xpack.security.transport.ssl.enabled: false

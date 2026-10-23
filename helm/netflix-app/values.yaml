@@ -1,0 +1,25 @@
+
+replicaCount:
+  backend: 1
+  frontend: 1
+  search: 1
+
+images:
+  backend: dk95074450/netflix-backend:v1
+  frontend: dk95074450/netflix-frontend:v1
+  search: dk95074450/netflix-search:v1
+
+config:
+  kafkaBootstrapServers: "kafka:9092"
+  mongoUri: "mongodb://mongodb:27017/netflix"
+  elasticsearchUri: "http://elasticsearch:9200"
+  jwtSecret: "mysupersecretkeymysupersecretkeyproduction"
+  corsAllowedOrigins: "http://localhost:3000,http://localhost:5173,http://localhost:30000"
+
+autoscaling:
+  enabled: false
+
+mongodb:
+  enabled: true
+  auth:
+    enabled: false

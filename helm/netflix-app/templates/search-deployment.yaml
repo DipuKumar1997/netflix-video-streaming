@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-search
+  labels:
+    app: netflix-search
+spec:
+  replicas: {{ .Values.replicaCount.search }}
+  selector:
+    matchLabels:
+      app: netflix-search
+  template:
+    metadata:
+      labels:
+        app: netflix-search
+    spec:
+      containers:
+        - name: search
+          image: {{ .Values.images.search }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8086
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

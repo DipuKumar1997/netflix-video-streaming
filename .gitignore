@@ -5,6 +5,25 @@ videos/*
 **/build/
 **/videos/
 **/node_modules/
+
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# Maven
+target/
+
+
+
 # Java
 target/
 *.jar

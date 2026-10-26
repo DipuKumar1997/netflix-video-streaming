@@ -1,0 +1,143 @@
+
+.watch-player-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+
+.watch-player-host {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.watch-player-host .video-js {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000;
+}
+
+.watch-player-host .video-js .vjs-tech {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.watch-player-host .video-js .vjs-control-bar {
+  z-index: 5;
+}
+
+.watch-back-button {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 100001;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 12px 18px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 999px;
+
+  background: rgb(0 0 0 / 70%);
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: background 160ms ease;
+}
+
+.watch-back-button:hover {
+  background: #e50914;
+}
+
+.watch-back-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.netflix-quality-menu {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 8px;
+
+  background: rgb(20 20 20 / 92%);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 40%);
+}
+
+.netflix-quality-select {
+  min-width: 110px;
+  padding: 9px 12px;
+
+  border: none;
+  border-radius: 5px;
+
+  background: #222;
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  outline: none;
+}
+
+.netflix-quality-select:focus-visible {
+  outline: 2px solid #e50914;
+  outline-offset: 2px;
+}
+
+.netflix-quality-select option {
+  background: #222;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .watch-back-button {
+    top: 12px;
+    left: 12px;
+    padding: 9px 12px;
+  }
+
+  .netflix-quality-menu {
+    top: 12px;
+    right: 12px;
+  }
+
+  .netflix-quality-select {
+    min-width: 90px;
+    padding: 8px;
+  }
+}
+
+.custom-quality-control {
+  flex: 0 0 auto !important;
+}
+
+.custom-quality-selector {
+  box-sizing: border-box;
+}
+
+.custom-quality-selector option {
+  color: #fff;
+  background: #222;
+}

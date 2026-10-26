@@ -72,6 +72,9 @@ public class MovieController {
     public List<Movie> search(@RequestParam String title) {
         return movieService.searchByTitle(title);
     }
+
+
+
     @PostMapping("/add")
     public ResponseEntity<?> addMovie(
             @RequestHeader("Authorization") String token,
@@ -79,7 +82,8 @@ public class MovieController {
             @RequestParam("genre") String genre,
             @RequestParam("language") String language,
             @RequestParam(value = "posterUrl", required = false) String posterUrl,
-            @RequestParam("videoFile") MultipartFile videoFile
+            @RequestParam("videoFile") MultipartFile videoFile,
+            @RequestParam(value = "isPremium", defaultValue = "false") boolean isPremium
     ) {
         try {
             if (token.startsWith("Bearer ")) token = token.substring(7);
@@ -97,10 +101,12 @@ public class MovieController {
             }
             // Create and save the video metadata + file
             Video video = new Video();
+            video.setTitle(title);
+            video.setPremium(isPremium); // Fix: Attach flag to entity
             //    video.setTitle(title);
             //    video.setDescription("Uploaded via /add");
             //    video.setContentType(videoFile.getContentType());
-            Video savedVideo = videoService.saveVideo(video, videoFile);
+            Video savedVideo = videoService.saveVideo(video, videoFile,isPremium);
             /*
             // Save video file locally
             String uploadDir = "./videos/";
@@ -121,6 +127,7 @@ public class MovieController {
             movie.setPosterUrl(posterUrl);
             movie.setVideoId(savedVideo.getVideoId());
             movie.setDescription ( "a string so that not null" );
+
             //  movie.setVideoId(savedVideo.getVideoId());
             //   movie.setVideo(videoFile);
             //   movie.setVideoPath(filepath.toString());

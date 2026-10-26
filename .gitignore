@@ -5,6 +5,7 @@ videos/*
 **/build/
 **/videos/
 **/node_modules/
+**/.terraform/
 
 
 # IntelliJ IDEA
@@ -22,10 +23,6 @@ out/
 # Maven
 target/
 
-
-
-# Java
-target/
 *.jar
 *.log
 hsl-videos/**
@@ -36,7 +33,6 @@ dist/
 .vite/
 
 # IDE
-.idea/
 .vscode/
 
 # OS

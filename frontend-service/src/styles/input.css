@@ -1,4 +1,54 @@
 @import "tailwindcss";
-@plugin "flowbite-react/plugin/tailwindcss";
-@source "../../.flowbite-react/class-list.json";
-@import "flowbite/src/themes/default";
+@import "video.js/dist/video-js.css";
+
+/* Force Video.js to fill 100% of the viewport container */
+.video-js {
+  width: 100% !important;
+  height: 100% !important;
+  background-color: #000 !important;
+}
+
+.video-js .vjs-tech {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* Red Play Button (Netflix Style) */
+.video-js .vjs-big-play-button {
+  background-color: rgba(229, 9, 20, 0.85) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 2.2em !important;
+  height: 2.2em !important;
+  line-height: 2.2em !important;
+  margin-top: -1.1em !important;
+  margin-left: -1.1em !important;
+}
+
+/* Control Bar Styling */
+.video-js .vjs-control-bar {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%) !important;
+  height: 4em !important;
+}
+
+.video-js .vjs-play-progress {
+  background-color: #e50914 !important;
+}
+.video-js .vjs-quality-selector {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.video-js .vjs-quality-selector .vjs-menu-button {
+  cursor: pointer !important;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}

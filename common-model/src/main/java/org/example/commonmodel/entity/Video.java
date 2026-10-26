@@ -21,4 +21,7 @@ public class Video {
     private String Description;
     private String contentType;
     private String videoPath;
+
+    private boolean premium;
+
 }

@@ -8,8 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface VideoService {
 
     //save video
-    Video saveVideo(Video video, MultipartFile file) ;
-    //get video
+    Video saveVideo(Video video, MultipartFile file,boolean isPremium) ;
 
     //get video by id
     Video getVideo(String videoId) ;

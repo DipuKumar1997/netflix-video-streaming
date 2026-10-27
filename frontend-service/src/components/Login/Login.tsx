@@ -4,8 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
-import netflix_home from "../../assets/netflix_home.png";
-  import background_banner from "../../assets/background_banner.jpg";
+import background_banner from "../../assets/background_banner.jpg";
 
 export default function LoginSignup() {
   const [state, setState] = useState("Sign In");

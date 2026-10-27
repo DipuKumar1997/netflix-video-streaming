@@ -37,6 +37,11 @@ data "aws_cloudfront_origin_request_policy" "cors_s3_origin" {
   name = "Managed-CORS-S3Origin"
 }
 
+# Lookup Managed CORS Response Headers Policy
+data "aws_cloudfront_response_headers_policy" "cors_policy" {
+  name = "Managed-CORS-With-Preflight"
+}
+
 # 1. Unique S3 Bucket Name Generator
 resource "random_id" "bucket_suffix" {
   byte_length = 4
@@ -113,8 +118,9 @@ resource "aws_cloudfront_distribution" "media_cdn" {
     target_origin_id = "S3-${aws_s3_bucket.media_bucket.id}"
 
     # Referenced directly via data sources
-    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.cors_s3_origin.id
+    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.cors_policy.id
 
     viewer_protocol_policy = "redirect-to-https"
     compress               = true

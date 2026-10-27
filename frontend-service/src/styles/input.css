@@ -35,6 +35,7 @@
 .video-js .vjs-play-progress {
   background-color: #e50914 !important;
 }
+
 .video-js .vjs-quality-selector {
   display: flex !important;
   align-items: center !important;
@@ -44,11 +45,19 @@
 .video-js .vjs-quality-selector .vjs-menu-button {
   cursor: pointer !important;
 }
-.no-scrollbar::-webkit-scrollbar {
-  display: none !important;
-}
 
-.no-scrollbar {
-  -ms-overflow-style: none !important; /* IE and Edge */
-  scrollbar-width: none !important;  /* Firefox */
+/* --- Clean Cross-Browser Scrollbar Hiding Utility --- */
+@layer utilities {
+  /* Chrome, Safari, Edge, and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+
+  /* Firefox and IE/Edge */
+  .no-scrollbar {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;     /* Firefox */
+  }
 }

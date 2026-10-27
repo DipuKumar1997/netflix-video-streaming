@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-config
 data:
   SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.config.kafkaBootstrapServers | quote }}
-  SPRING_DATA_MONGODB_URI: {{ .Values.config.mongoUri | quote }}
+#  SPRING_DATA_MONGODB_URI: {{ .Values.config.mongoUri | quote }}
   SPRING_ELASTICSEARCH_URIS: {{ .Values.config.elasticsearchUri | quote }}
   JWT_SECRET: {{ .Values.config.jwtSecret | quote }}
   CORS_ALLOWED_ORIGINS: {{ .Values.config.corsAllowedOrigins | quote }}

@@ -56,6 +56,13 @@ echo " App ready! Access Frontend at: http://localhost:5173"
 echo "========================================================="
 
 :'
+
+helm uninstall my-netflix-app
+helm upgrade --install netflix-app ./helm/netflix-app
+
+cd frontend-service/
+npm run build
+cd ..
 docker build -t dk95074450/netflix-frontend:v1 -f frontend-service/Dockerfile frontend-service
 minikube image load dk95074450/netflix-frontend:v1
 kubectl rollout restart deployment/my-netflix-app-frontend
@@ -65,9 +72,18 @@ mvn clean package -DskipTests
 docker build -t dk95074450/netflix-backend:v1 -f backend-service/Dockerfile .
 minikube image load dk95074450/netflix-backend:v1
 kubectl rollout restart deployment/my-netflix-app-backend
+
 kubectl logs -l app=netflix-backend -f --tail=100
+kubectl logs -f deployment/my-netflix-app-backend
 
 kubectl port-forward svc/postgres-service 5432:5432
+
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
+kubectl create secret generic aws-credentials \
+  --from-literal=AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+  --from-literal=AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
 
 '
 

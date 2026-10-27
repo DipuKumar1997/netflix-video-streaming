@@ -96,7 +96,7 @@ public class MovieController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
             }
             User user = optionalUser.get();
-            if (!user.getIsAdmin()) {
+            if (!user.isAdmin ()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admin can add movies.");
             }
             // Create and save the video metadata + file

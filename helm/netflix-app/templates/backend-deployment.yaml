@@ -25,21 +25,23 @@ spec:
               value: "s3"
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: "kafka:9092"
-            - name: MONGO_HOST
-              value: "mongodb"
-            - name: MONGO_PORT
-              value: "27017"
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                  secretKeyRef:
-                    name: aws-credentials
-                    key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: aws-credentials
-                  key: AWS_SECRET_ACCESS_KEY
+#            - name: MONGO_HOST
+#              value: "mongodb"
+#            - name: MONGO_PORT
+#              value: "27017"
+#            - name: AWS_ACCESS_KEY_ID
+#              valueFrom:
+#                  secretKeyRef:
+#                    name: aws-credentials
+#                    key: AWS_ACCESS_KEY_ID
+#            - name: AWS_SECRET_ACCESS_KEY
+#              valueFrom:
+#                secretKeyRef:
+#                  name: aws-credentials
+#                  key: AWS_SECRET_ACCESS_KEY
           envFrom:
+            - secretRef:
+                name: netflix-backend-secrets
             - configMapRef:
                 name: {{ .Release.Name }}-config
           resources:

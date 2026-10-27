@@ -1,37 +1,50 @@
+
 package org.example.commonmodel.entity;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id; // <-- Make sure this is imported for @Id
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed; // <-- Make sure this is imported for @Indexed
+import org.springframework.data.annotation.Transient;
 
-import jakarta.validation.constraints.Email;   // <-- For @Email
-import jakarta.validation.constraints.NotNull; // <-- For @NotNull
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
 @Document(collection = "users")
 public class User {
+
     @Id
     private String id;
+
     private String name;
 
-    @NotNull // Jakarta Bean Validation
-    @Email   // Jakarta Bean Validation
-    @Indexed(unique = true) // Spring Data MongoDB
+    @NotBlank
+    @Email
+    @Indexed(unique = true)
     private String email;
 
     private String password;
-    private boolean IsAdmin; // Default false
+
+    private boolean admin=false;
+
     private List<Profile> profiles;
 
-    public boolean getIsAdmin() {
-        return IsAdmin;
+    // Subscription information
+    private String subscriptionStatus = "FREE";
+    private String subscriptionPlan;
+    private Instant premiumExpiresAt;
+
+
+    @Transient
+    public boolean isPremiumActive() {
+        return "ACTIVE".equals(subscriptionStatus)
+                && premiumExpiresAt != null
+                && premiumExpiresAt.isAfter(Instant.now());
     }
 
-    // setter for isAdmin (optional but recommended)
-    public void setIsAdmin(Boolean isAdmin) {
-        this.IsAdmin = isAdmin;
-    }
+
 }

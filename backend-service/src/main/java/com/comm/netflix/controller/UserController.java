@@ -10,9 +10,12 @@ import org.example.commonmodel.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +28,28 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @GetMapping("/me/subscription")
+    public ResponseEntity<?> getMySubscription(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Assumes authentication.getName() returns the user's email.
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException (
+                        HttpStatus.NOT_FOUND, "User not found"));
+
+        return ResponseEntity.ok( Map.of(
+                "subscriptionStatus",
+                user.isPremiumActive() ? "ACTIVE" : "FREE",
+                "premium",
+                user.isPremiumActive(),
+                "premiumExpiresAt",
+                user.getPremiumExpiresAt() != null
+                        ? user.getPremiumExpiresAt().toString()
+                        : ""
+        ));
+    }
     @PostMapping("/register")
     public ApiResponse registerUser(@RequestBody User user) {
         try {
@@ -32,11 +57,11 @@ public class UserController {
             User newUser =new User();
             newUser.setEmail(user.getEmail());
             newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-            newUser.setIsAdmin(false);  // Set admin flag before saving
+//            newUser.setIsAdmin(false);  // Set admin flag before saving
             newUser.setName(user.getName());
             userRepository.save(newUser);
 
-            String token = jwtUtil.generateToken(user.getEmail());
+            String token = jwtUtil.generateToken(user);
             return new ApiResponse(token, "User registered successfully", 201);
         } catch (Exception e) {
             return new ApiResponse(null, "Registration failed: " + e.getMessage(), 500);
@@ -63,7 +88,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
             }
             User user = optionalUser.get();
-            if (!user.getIsAdmin()) {
+            if (!user.isAdmin ()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Not an admin.");
             }
 
@@ -102,7 +127,7 @@ public class UserController {
         if (!passwordMatches) {
             return new ApiResponse(null, "Invalid credentials", 401);
         }
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user);
         return new ApiResponse(token, "Login successful", 200);
     }
 //    private String maskEmail(String email) {

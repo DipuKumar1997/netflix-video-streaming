@@ -17,6 +17,8 @@ out/
 
 # Eclipse
 .settings/
+work.class
+work.java
 .classpath
 .project
 

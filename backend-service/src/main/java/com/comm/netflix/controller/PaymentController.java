@@ -2,18 +2,23 @@ package com.comm.netflix.controller;
 
 import com.comm.netflix.DTO.OrderRequestDto;
 import com.comm.netflix.DTO.PaymentVerificationDto;
+import com.comm.netflix.repos.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.commonmodel.entity.User;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 //import software.amazon.awssdk.core.sync.RequestBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.s3.S3Client;
 //import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -39,6 +44,13 @@ public class PaymentController {
 
     private final S3Client s3Client;
     private final ObjectMapper objectMapper;
+
+    private final UserRepository userRepository;
+
+    @GetMapping("/razorpay-key")
+    public ResponseEntity<Map<String, String>> getRazorpayKey() {
+        return ResponseEntity.ok(Map.of("keyId", razorpayKeyId));
+    }
 
     /**
      * Create Razorpay Order
@@ -68,8 +80,16 @@ public class PaymentController {
      * Verify Payment & Sync Entitlement to S3
      */
     @PostMapping("/verify-payment")
-    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationDto payload) {
+    public ResponseEntity<?> verifyPayment(
+            @RequestBody PaymentVerificationDto payload,
+            Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status( HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+
         try {
+            // 1. Verify Razorpay HMAC Signature
             JSONObject options = new JSONObject();
             options.put("razorpay_order_id", payload.getRazorpay_order_id());
             options.put("razorpay_payment_id", payload.getRazorpay_payment_id());
@@ -77,35 +97,47 @@ public class PaymentController {
 
             boolean isValid = Utils.verifyPaymentSignature(options, razorpaySecret);
             if (!isValid) {
-                return ResponseEntity.badRequest().body("Invalid payment signature check.");
+                return ResponseEntity.badRequest().body("Invalid payment signature.");
             }
 
-            // Save JSON entitlement record to S3: s3://bucket-name/subscriptions/{userId}.json
+            // 2. Fetch User by Email from Spring Security Authentication
+            String email = authentication.getName();
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException (HttpStatus.NOT_FOUND, "User not found"));
+
+            // 3. Update User MongoDB Fields matching user.isPremiumActive()
+            user.setSubscriptionStatus("ACTIVE");
+            user.setSubscriptionPlan("PREMIUM_MONTHLY");
+            user.setPremiumExpiresAt(Instant.now().plus(30, ChronoUnit.DAYS));
+            userRepository.save(user);
+
+            log.info("User [{}] upgraded to ACTIVE premium status until {}", email, user.getPremiumExpiresAt());
+
+            // 4. Save JSON entitlement record to S3
             Map<String, Object> subscriptionMeta = Map.of(
-                    "userId", payload.getUserId(),
+                    "userId", user.getId(),
+                    "email", email,
                     "paymentId", payload.getRazorpay_payment_id(),
                     "orderId", payload.getRazorpay_order_id(),
                     "status", "ACTIVE",
-                    "plan", "PREMIUM_MONTHLY",
-                    "createdAt", Instant.now().toString(),
-                    "expiresAt", Instant.now().plus(30, ChronoUnit.DAYS).toString()
+                    "expiresAt", user.getPremiumExpiresAt().toString()
             );
 
-            String s3Key = "subscriptions/" + payload.getUserId() + ".json";
-            String jsonPayload = objectMapper.writeValueAsString(subscriptionMeta);
-
+            String s3Key = "subscriptions/" + user.getId() + ".json";
             s3Client.putObject(
-                PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(s3Key)
-                    .contentType("application/json")
-                    .build(),
-                software.amazon.awssdk.core.sync.RequestBody.fromString(jsonPayload)
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(s3Key)
+                            .contentType("application/json")
+                            .build(),
+                    software.amazon.awssdk.core.sync.RequestBody.fromString(objectMapper.writeValueAsString(subscriptionMeta))
             );
 
-            log.info("Saved subscription entitlement for userId={} to s3://{}/{}", payload.getUserId(), bucketName, s3Key);
-
-            return ResponseEntity.ok(Map.of("message", "Subscription activated successfully!", "status", "SUCCESS"));
+            return ResponseEntity.ok(Map.of(
+                    "status", "SUCCESS",
+                    "message", "Subscription activated successfully!",
+                    "premiumExpiresAt", user.getPremiumExpiresAt().toString()
+            ));
 
         } catch (Exception e) {
             log.error("Payment verification failed", e);

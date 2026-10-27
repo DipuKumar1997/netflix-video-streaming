@@ -19,35 +19,47 @@ export const SubscriptionPage: React.FC = () => {
     if (!res) return alert('Razorpay SDK failed to load.');
 
     const token = Cookies.get('jwtToken');
-    const userId = localStorage.getItem('userId') || 'user_123';
+    const authHeader = { headers: { Authorization: `Bearer ${token}` } };
 
     try {
-      // 1. Create Order
-      const { data: order } = await axios.post('/api/payment/create-order', {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // 1. Fetch Razorpay key from backend
+      const keyRes = await axios.get('/api/payment/razorpay-key', authHeader);
+      const activeRazorpayKey = keyRes.data.keyId;
 
+      // 2. Create Order
+      const { data: order } = await axios.post('/api/payment/create-order', {}, authHeader);
       const parsedOrder = typeof order === 'string' ? JSON.parse(order) : order;
 
-      // 2. Open Razorpay Modal (UPI / Cards / Netbanking)
+      // 3. Open Razorpay Checkout Modal
       const options = {
-        key: 'rzp_test_key', // Replace with your key
+        key: activeRazorpayKey,
         amount: parsedOrder.amount,
         currency: parsedOrder.currency,
         name: 'Netflix Clone Premium',
         description: 'Monthly Subscription Access',
         order_id: parsedOrder.id,
         handler: async (response: any) => {
-          // 3. Verify Payment and store S3 metadata
-          await axios.post('/api/payment/verify-payment', {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            userId: userId,
-          });
+          try {
+            // 4. Verify Payment with Authorization header
+            const verifyRes = await axios.post(
+              '/api/payment/verify-payment',
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              authHeader
+            );
 
-          alert('Payment Successful! Premium activated.');
-          window.location.href = '/dashboard';
+            if (verifyRes.data.status === 'SUCCESS') {
+              localStorage.setItem('role', 'ROLE_PREMIUM');
+              localStorage.setItem('isPremium', 'true');
+              alert('Payment Successful! Premium membership activated.');
+              window.location.href = '/dashboard';
+            }
+          } catch (verifyErr: any) {
+            alert('Payment verification failed: ' + verifyErr.message);
+          }
         },
         theme: { color: '#E50914' },
       };
@@ -64,14 +76,24 @@ export const SubscriptionPage: React.FC = () => {
       <div className="bg-gray-900 border border-amber-500/30 p-8 rounded-2xl max-w-md w-full shadow-2xl flex flex-col items-center text-center">
         <Crown size={48} className="text-amber-400 mb-4" />
         <h1 className="text-3xl font-extrabold mb-2">Upgrade to Premium</h1>
-        <p className="text-gray-400 mb-6 text-sm">Unlock full HD 1080p video streaming and exclusive content.</p>
+        <p className="text-gray-400 mb-6 text-sm">
+          Unlock full HD 1080p video streaming and exclusive content.
+        </p>
 
-        <div className="text-4xl font-black mb-6">₹199 <span className="text-base text-gray-400 font-normal">/ month</span></div>
+        <div className="text-4xl font-black mb-6">
+          ₹199 <span className="text-base text-gray-400 font-normal">/ month</span>
+        </div>
 
         <ul className="text-left w-full flex flex-col gap-3 mb-8 text-sm">
-          <li className="flex items-center gap-2"><Check size={18} className="text-amber-400" /> Unlimited Access to Premium Videos</li>
-          <li className="flex items-center gap-2"><Check size={18} className="text-amber-400" /> Ultra HD 1080p & 720p ABR Streaming</li>
-          <li className="flex items-center gap-2"><Check size={18} className="text-amber-400" /> Offline Video Downloads</li>
+          <li className="flex items-center gap-2">
+            <Check size={18} className="text-amber-400" /> Unlimited Access to Premium Videos
+          </li>
+          <li className="flex items-center gap-2">
+            <Check size={18} className="text-amber-400" /> Ultra HD 1080p & 720p ABR Streaming
+          </li>
+          <li className="flex items-center gap-2">
+            <Check size={18} className="text-amber-400" /> Offline Video Downloads
+          </li>
         </ul>
 
         <button

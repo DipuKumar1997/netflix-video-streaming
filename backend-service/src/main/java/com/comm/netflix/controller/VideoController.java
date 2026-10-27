@@ -33,19 +33,22 @@ public class VideoController {
         this.videoService = videoService;
         this.storageService = storageService;
     }
-    private boolean canAccessVideo(Video video, Authentication authentication) {
-        // Free videos are accessible by everyone
+     private boolean canAccessVideo(Video video, Authentication authentication) {
+        // Free videos are accessible by everyone.
         if (!video.isPremium()) {
             return true;
         }
-        // Premium videos require active authentication and ROLE_PREMIUM
+
+        // Premium videos require authentication and ROLE_PREMIUM.
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
+
         return authentication.getAuthorities().stream()
-                .anyMatch(granted -> granted.getAuthority().equals("ROLE_PREMIUM")
-                        || granted.getAuthority().equals("PREMIUM"));
+                .anyMatch(granted ->
+                        "ROLE_PREMIUM".equals(granted.getAuthority()));
     }
+
     /**
      * Single Whole Video Stream Endpoint
      */
@@ -54,14 +57,11 @@ public class VideoController {
         Video video = videoService.getVideo(videoId);
         if (!canAccessVideo(video, authentication)) {
             log.warn("Access denied for videoId: {}. Premium subscription required.", videoId);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Premium subscription required to access this video.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN) .body("Premium subscription required to access this video.");
         }
         log.info("Streaming whole video metadata: {}, Path: {}", video.getTitle(), video.getVideoPath());
-
         FileSystemResource fileSystemResource = new FileSystemResource(video.getVideoPath());
         String contentType = video.getContentType() != null ? video.getContentType() : "video/mp4";
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(fileSystemResource);
@@ -77,9 +77,7 @@ public class VideoController {
             @PathVariable String videoId,
             @PathVariable String filePath,
             Authentication authentication) {
-
         Video video = videoService.getVideo(videoId);
-
         // Enforce Premium Access Gate
         if (!canAccessVideo(video, authentication)) {
             log.warn("HLS streaming forbidden for videoId: {}. User lack ROLE_PREMIUM.", videoId);

@@ -37,16 +37,12 @@ public class WebSeriesController {
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.status(401).body("User not found");
             }
-
             User user = optionalUser.get();
-
-            if (!"admin".equalsIgnoreCase(user.getIsAdmin() ? "admin" : "user")) {
+            if (!"admin".equalsIgnoreCase(user.isAdmin () ? "admin" : "user")) {
                 return ResponseEntity.status(403).body("Only admin can add web series");
             }
-
             WebSeries added = webSeriesService.addWebSeries(webSeries);
             return ResponseEntity.ok(added);
-
         } catch (JwtException e) {
             // This catches invalid signature, expired token, malformed token etc.
             return ResponseEntity.status(401).body("Invalid or unauthorized token");

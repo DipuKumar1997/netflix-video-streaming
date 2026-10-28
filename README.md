@@ -1,71 +1,71 @@
 # Netflix Video Streaming Platform (Microservices Architecture)
 
-A production-grade, event-driven video streaming platform built with **Spring Boot**, **React (Vite)**, **AWS S3/CloudFront**, **Apache Kafka**, **Elasticsearch**, **Kubernetes**, and **Terraform**. Designed for adaptive bitrate HLS video playback, premium subscription gating, and scalable cloud infrastructure.
-
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/DipuKumar1997/netflix-video-streaming)
+A production-grade, event-driven video streaming platform built with **Spring Boot**, **React (Vite)**, **AWS S3/CloudFront**, **Apache Kafka**, **Elasticsearch**, **Kubernetes**, and **Terraform**. Designed for adaptive bitrate HLS video playback, premium subscription gating, and scalable microservices search indexing.
 
 ---
 
-## Application Architecture
+# Application Architecture
+
+<p align="center">
+  <img src="docs/search-microservices.drawio.svg" width="900"/>
+</p>
 
 This architecture focuses on the search flow and event-driven communication:
+1. **Client** sends `/search?q=` request to **Backend**.
+2. **Backend** communicates with **Search Service**.
+3. **Search Service** retrieves data from **Elasticsearch**.
+4. **Admin uploads** trigger **Kafka events**.
+5. **Search Service** consumes **Kafka events** and updates **Elasticsearch**.
 
-1. Client sends `/search?q=` request to Backend.
-2. Backend communicates with Search Service.
-3. Search Service retrieves data from Elasticsearch.
-4. Admin uploads trigger Kafka events.
-5. Search Service consumes Kafka events and updates Elasticsearch.
-
-> *Login and Signup functionality operates normally but is not included in this diagram.*
-
-```
-[ Client ] ──(/search?q=)──> [ Backend API Gateway ] ───> [ Search Service ] ───> [ Elasticsearch ]
-                                                                   ▲
-                                                                   │ (Consumes Kafka Event)
-[ Admin Upload ] ──────────────────────────────────────────> [ Apache Kafka ]
-```
+> *Note: Login and Signup functionality operates normally but is not included in this diagram.*
 
 ---
 
-## End-to-End Media Delivery Architecture
+# Application Video
 
-```
+[View Project Architecture / Demo](https://drive.google.com/file/d/1IgScqm_wyGXaEg7SjNqAQi5ACEuxN8r7/view?usp=sharing)
+
+---
+
+## 🎬 End-to-End Media Delivery Architecture
+
+```text
 [ React / Vite Frontend ]
         │
-        ├── Authorization: Bearer <JWT> / Cookie
+        ├── Header: Authorization Bearer <JWT> or Cookie
         ▼
-[ Spring Boot API Gateway / Backend ] ─── (Auth Check: JWT Claims & MongoDB)
+[ Spring Boot Backend ] ──── (Dual Authentication: JwtAuthenticationFilter)
         │                                         │
-        ├── Razorpay Payment Webhooks             ├── Produces Events
+        ├── Razorpay Payment Webhooks             ├── Event Publisher
         ▼                                         ▼
-[ Subscription Status: ACTIVE ]           [ Apache Kafka ]
+[ DB: subscriptionStatus = ACTIVE ]       [ Apache Kafka ]
         │                                         │
-        ├── Redirects to Signed HLS               ├── Dynamic Search Indexing
+        ├── Serves Signed / Proxied HLS          ├── Sync Search Index
         ▼                                         ▼
 [ AWS CloudFront CDN (OAC) ] <─────────── [ Elasticsearch Engine ]
         │
         ▼
-[ AWS S3 Media Bucket ] (.m3u8 / .ts segments)
+[ AWS S3 Media Bucket ] (.m3u8 playlists & .ts segments)
 ```
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-* **Backend:** Java 17, Spring Boot, Spring Security, Spring Cloud, RESTful APIs, JPA/Hibernate, JWT authentication, FFmpeg HLS transcoding
+* **Backend:** Java 17, Spring Boot, Spring Security (RBAC), Spring Cloud Gateway, JPA/Hibernate, RESTful APIs, JWT authentication, FFmpeg HLS transcoding
 * **Frontend:** React, Vite, TypeScript, Video.js (VHS), Tailwind CSS v4, Lucide Icons
 * **Databases & Search:** MongoDB Atlas, PostgreSQL, Elasticsearch, Redis
-* **Messaging & Event-Driven:** Apache Kafka, AKHQ
+* **Messaging & Events:** Apache Kafka, AKHQ
 * **Cloud & DevOps:** AWS (S3, CloudFront OAC, IAM), Terraform, Docker, Kubernetes (K8s), Helm
-* **Monitoring & Tooling:** Kibana, Glances, Dozzle
+* **Monitoring & Tooling:** Kibana, Glances, Dozzle, Homer Dashboard
 
 ---
 
-## Key Features
+## 🚀 Key Features
 
 ### 1. Adaptive Bitrate (ABR) HLS Streaming
 * Transcodes raw video uploads into **HLS (HTTP Live Streaming)** master playlists (`master.m3u8`) and multi-resolution variants (`1080p`, `720p`, `480p`, `360p`).
-* Serves video segments directly via **AWS CloudFront CDN** backed by Origin Access Control (OAC) and customized CORS preflight policies.
+* Serves video segments directly via **AWS CloudFront CDN** backed by Origin Access Control (OAC) and dynamic CORS preflight policies.
 
 ### 2. Tiered Access Control & Token Security
 * Custom `JwtAuthenticationFilter` cross-verifies stateless JWT payload claims (`isPremium`) and live database status (`subscriptionStatus: ACTIVE`).
@@ -81,7 +81,7 @@ This architecture focuses on the search flow and event-driven communication:
 
 ---
 
-## Infrastructure & Cloud Provisioning
+## ☁️ Infrastructure & Cloud Provisioning
 
 Infrastructure is defined as code using **Terraform** under `terraform/`:
 
@@ -93,7 +93,7 @@ Infrastructure is defined as code using **Terraform** under `terraform/`:
 
 ---
 
-## Local Development & Setup
+## 💻 Local Development & Deployment
 
 ### Prerequisites
 * Java 17+ & Maven 3.8+
@@ -117,7 +117,6 @@ terraform apply -auto-approve
 ### 3. Backend Setup
 ```bash
 cd ../backend-service
-# Update src/main/resources/application.properties with AWS credentials and MongoDB URI
 mvn clean package -DskipTests
 docker build -t netflix-backend:latest .
 ```
@@ -134,40 +133,24 @@ cd ../frontend-service
 npm install
 npm run dev
 ```
-The client app will be accessible at `http://localhost:5173`.
 
 ---
 
-## Environment Configuration
+## 📊 Dashboards & Monitoring Access
 
-### Backend (`application-prod.properties`)
-```properties
-spring.data.mongodb.uri=mongodb+srv://<user>:<password>@cluster.mongodb.net/netflix
-aws.region=us-east-1
-aws.s3.bucket=netflix-media-platform-xxxx
-aws.cloudfront.domain=https://d2wp92cwk7mzt0.cloudfront.net
-jwt.secret=YOUR_64_CHARACTER_BASE64_SECRET_KEY
-razorpay.key.id=YOUR_RAZORPAY_KEY_ID
-razorpay.key.secret=YOUR_RAZORPAY_KEY_SECRET
-```
+| Service | URL (Local Example) | Description |
+| :--- | :--- | :--- |
+| **Homer Dashboard** | `http://localhost:8001` | Central dashboard for all running services |
+| **Glances** | `http://localhost:61208` | Real-time system and Docker monitoring |
+| **Dozzle** | `http://localhost:8888` | Live Docker container logs |
+| **AKHQ** | `http://localhost:8081` | Kafka topic and consumer management |
+| **Kibana** | `http://localhost:5601` | Elasticsearch data visualization |
 
 ---
 
-## Core API Endpoints
-
-| Method | Endpoint | Authorization | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Public | Authenticates user & returns JWT token |
-| `GET` | `/stream/{videoId}/master.m3u8` | `ROLE_PREMIUM` | Fetches master HLS playlist for streaming |
-| `POST` | `/api/payment/create-order` | `ROLE_USER` | Generates a Razorpay payment order |
-| `POST` | `/api/payment/verify-payment` | `ROLE_USER` | Verifies signature & upgrades user to `ROLE_PREMIUM` |
-| `GET` | `/api/videos/search?q={query}` | Public | Executes full-text search against Elasticsearch |
-
----
-
-## Author
+## 👤 Author
 
 **Dipu Kumar**  
-*Computer Science & Engineering, NIT Mizoram*  
+*B.Tech in Computer Science & Engineering, NIT Mizoram*  
 * **GitHub:** [github.com/DipuKumar1997](https://github.com/DipuKumar1997)  
 * **LinkedIn:** [linkedin.com/in/dipu-kumar-450026334](https://linkedin.com/in/dipu-kumar-450026334)
